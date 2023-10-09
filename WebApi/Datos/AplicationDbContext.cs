@@ -6,7 +6,7 @@ namespace WebApi.Datos
     public class AplicationDbContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
-
+        public DbSet<NumberProduct> NumberProducts { get; set; }
         public AplicationDbContext(DbContextOptions<AplicationDbContext> options) : base(options)
         {
             

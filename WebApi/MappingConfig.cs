@@ -14,6 +14,10 @@ namespace WebApi
 
             CreateMap<Product, ProductCreateDTO>().ReverseMap();
             CreateMap<Product, ProductUpdateDTO>().ReverseMap();
+
+            CreateMap<NumberProduct, NumberProductDTO>().ReverseMap();
+            CreateMap<NumberProduct,NumberProductCreateDTO>().ReverseMap();
+            CreateMap<NumberProduct,NumberProductUpdateDTO>().ReverseMap();
         }
     }
 }

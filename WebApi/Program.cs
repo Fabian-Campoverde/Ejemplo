@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using WebApi;
 using WebApi.Datos;
+using WebApi.Repositorio;
+using WebApi.Repositorio.IRepositorio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,10 @@ builder.Services.AddDbContext<AplicationDbContext>(option=>
 );
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+
+builder.Services.AddScoped<iProductRepositorio,ProductRepositorio>();
+
+builder.Services.AddScoped<iNumberProductRepositorio,NumberProductRepositorio>();
 
 var app = builder.Build();
 

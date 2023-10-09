@@ -13,29 +13,32 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class NumberProductController : ControllerBase
     {
-        private readonly ILogger<ProductController> logger;
+        private readonly ILogger<NumberProductController> logger;
         private readonly iProductRepositorio productRepo;
+        private readonly iNumberProductRepositorio numberRepo;
         private readonly IMapper mapper;
         protected ApiResponse response;
-         public ProductController(ILogger<ProductController> _logger, iProductRepositorio _productRepo, IMapper mapp)
+         public NumberProductController(ILogger<NumberProductController> _logger, iProductRepositorio _productRepo, 
+                                                                        iNumberProductRepositorio _numberRepo, IMapper mapp)
         {
             logger = _logger;   
             productRepo = _productRepo;
+            numberRepo = _numberRepo;
             mapper = mapp;
             response= new ApiResponse();
         }
 
 
         [HttpGet]
-        public async Task< ActionResult< ApiResponse>> GetProducts()
+        public async Task< ActionResult< ApiResponse>> GetNumberProducts()
         {
             try
             {
-                logger.LogInformation("Obtener Productos");
-                IEnumerable<Product> productList = await productRepo.obtenerTodos();
-                response.Resultado = mapper.Map<IEnumerable<ProductDTO>>(productList);
+                logger.LogInformation("Obtener Numeros de Productos");
+                IEnumerable<NumberProduct> numberproductList = await numberRepo.obtenerTodos();
+                response.Resultado = mapper.Map<IEnumerable<NumberProductDTO>>(numberproductList);
                 response.StatusCode = HttpStatusCode.OK;
                 return Ok(response);
             }
@@ -52,24 +55,24 @@ namespace WebApi.Controllers
             
                 
         }
-        [HttpGet("id:int",Name ="GetProductId")]
+        [HttpGet("id:int",Name ="GetNumberProductId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task< ActionResult< ApiResponse>> GetProduct(int id) 
+        public async Task< ActionResult< ApiResponse>> GetNumberProduct(int id) 
         {
             try
             {
                 if (id == 0)
                 {
-                    logger.LogError("Error con el producto " + id);
+                    logger.LogError("Error con el numero de producto " + id);
                     response.StatusCode = HttpStatusCode.BadRequest;
                     response.IsExitoso = false;
                     return BadRequest(response);
                 }
                 //var prod = ProductStore.lista.FirstOrDefault(p => p.Id == id);
-                var prod = await productRepo.Obtener(x => x.Id == id);
+                var prod = await numberRepo.Obtener(x => x.ProductNo == id);
 
                 if (prod == null)
                 {
@@ -77,7 +80,7 @@ namespace WebApi.Controllers
                     response.IsExitoso = false;
                     return NotFound(response);
                 }
-                response.Resultado = mapper.Map<ProductDTO>(prod);
+                response.Resultado = mapper.Map<NumberProductDTO>(prod);
                 response.StatusCode = HttpStatusCode.OK;
                 return Ok(response);
             }
@@ -95,7 +98,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task< ActionResult<ApiResponse>> addProduct([FromBody] ProductCreateDTO createproduct)
+        public async Task< ActionResult<ApiResponse>> addProduct([FromBody] NumberProductCreateDTO createnumberproduct)
         {
             try
             {
@@ -105,23 +108,29 @@ namespace WebApi.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (await productRepo.Obtener(p => p.Name.ToLower() == createproduct.Name.ToLower()) != null)
+                if (await numberRepo.Obtener(p => p.ProductNo == createnumberproduct.ProductNo) != null)
                 {
-                    ModelState.AddModelError("NameExists", "The name " + createproduct.Name + " exists");
+                    ModelState.AddModelError("NumberExists", "El N° de producto " + createnumberproduct.ProductNo + " existe");
                     return BadRequest(ModelState);
                 }
 
-                if (createproduct == null)
+                if (await productRepo.Obtener(p => p.Id == createnumberproduct.ProductId) == null)
                 {
-                    return BadRequest(createproduct);
+                    ModelState.AddModelError("IdNotExists", "El N° de producto padre " + createnumberproduct.ProductNo + " no existe");
+                    return BadRequest(ModelState);
+                }
+
+                if (createnumberproduct == null)
+                {
+                    return BadRequest(createnumberproduct);
 
                 }
-                Product modelo = mapper.Map<Product>(createproduct);
+                NumberProduct modelo = mapper.Map<NumberProduct>(createnumberproduct);
                 modelo.FechaCreacion=DateTime.Now;
-                await productRepo.Crear(modelo);
+                await numberRepo.Crear(modelo);
                 response.Resultado = modelo;
                 response.StatusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetProductId", new { id = modelo.Id }, response);
+                return CreatedAtRoute("GetProductId", new { id = modelo.ProductNo }, response);
             }
             catch (Exception ex)
             {
@@ -160,7 +169,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task< IActionResult> DeleteProduct(int id)
+        public async Task< IActionResult> DeleteNumberProduct(int id)
         {
             try
             {
@@ -171,15 +180,15 @@ namespace WebApi.Controllers
                     return BadRequest(response);
                 }
                 //var product = ProductStore.lista.FirstOrDefault(p=>p.Id==id);
-                var product = await productRepo.Obtener(p => p.Id == id);
-                if (product == null)
+                var numberproduct = await numberRepo.Obtener(p => p.ProductNo == id);
+                if (numberproduct == null)
                 {
                     response.IsExitoso = false;
                     response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(response);
                 }
                 //ProductStore.lista.Remove(product);
-                await productRepo.Remover(product);
+                await numberRepo.Remover(numberproduct);
                 response.StatusCode = HttpStatusCode.NoContent;
                 return Ok(response);
             }
@@ -195,15 +204,21 @@ namespace WebApi.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task< IActionResult> UpdateProduct(int id, [FromBody] ProductUpdateDTO updateproduct)
+        public async Task< IActionResult> UpdateNumberProduct(int id, [FromBody] NumberProductUpdateDTO updatenumberproduct)
         {
 
 
-            if(updateproduct == null || id!= updateproduct.Id)
+            if(updatenumberproduct == null || id!= updatenumberproduct.ProductNo)
             {
                 response.IsExitoso = false;
                 response.StatusCode = HttpStatusCode.BadRequest;
                 return BadRequest(response);
+            }
+
+            if (await productRepo.Obtener(n=> n.Id== updatenumberproduct.ProductId)==null)
+            {
+                ModelState.AddModelError("LlaveForanea", "El N° de producto padre " + updatenumberproduct.ProductId + " no exists");
+                return BadRequest(ModelState);
             }
             //var prod = ProductStore.lista.FirstOrDefault(p => p.Id == id);
             //prod.Name=product.Name;
@@ -223,71 +238,14 @@ namespace WebApi.Controllers
             //    Tipo = ""
 
             //};
-            Product modelo= mapper.Map<Product>(updateproduct);
-           await productRepo.Actualizar(modelo);
+            NumberProduct modelo= mapper.Map<NumberProduct>(updatenumberproduct);
+           await numberRepo.Actualizar(modelo);
             response.StatusCode = HttpStatusCode.NoContent;
 
             return Ok(response);
         }
 
-        [HttpPatch]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task< IActionResult> UpdateParcialProduct(int id, JsonPatchDocument<ProductUpdateDTO> product)
-        {
-            if (product == null || id ==0)
-            {
-                return BadRequest();
-            }
-            //var prod = ProductStore.lista.FirstOrDefault(p => p.Id == id);
-            
-
-            var prod= await productRepo.Obtener(p => p.Id == id,tracked:false);
-
-            ProductUpdateDTO productDTO= mapper.Map<ProductUpdateDTO>(prod);
-            //ProductUpdateDTO productDTO = new ProductUpdateDTO()
-            //{
-            //    Id = prod.Id,
-            //    Name = prod.Name,
-            //    Description = prod.Description,
-            //    Category = prod.Category,
-            //    Proveedor = prod.Proveedor,
-            //    Precio = prod.Precio,
-            //    Stock = prod.Stock,
-            //    imgUrl = prod.imgUrl
-            //};
-            if (prod == null) 
-            {
-                return BadRequest();
-            }
-            product.ApplyTo(productDTO, ModelState);
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            //Product modelo = new Product()
-            //{
-            //    Id = productDTO.Id,
-            //    Name = productDTO.Name,
-            //    Description = productDTO.Description,
-            //    FechaCreacion = DateTime.Now,
-            //    Category = productDTO.Category,
-            //    Proveedor = productDTO.Proveedor,
-            //    Precio = productDTO.Precio,
-            //    Stock = productDTO.Stock,
-            //    imgUrl = productDTO.imgUrl,
-            //    Tipo = ""
-
-            //};
-            Product modelo = mapper.Map<Product>(productDTO);
-            await productRepo.Actualizar(modelo);
-            response.StatusCode = HttpStatusCode.NoContent;
-            return Ok(response);
-        }
-
-
+        
     }
 
 }
