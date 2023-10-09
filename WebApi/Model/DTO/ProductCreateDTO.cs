@@ -2,10 +2,8 @@
 
 namespace WebApi.Model.DTO
 {
-    public class ProductDTO 
+    public class ProductCreateDTO
     {
-        public int Id { get; set; }
-
 
         [Required]
         [MaxLength(100)]

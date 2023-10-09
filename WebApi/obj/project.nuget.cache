@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "sc9cgMvxUz1PkEBDBmB+op4EVx0UNcQXSBuOUlsNVfZCcNZYU7mmmYagTRarevXn2tlE+HAAM6UQ+kJzRxFvFw==",
+  "dgSpecHash": "2HcPiDkywBov5jSCIq8rIU/F/3b36aS83BTXstpRC9qxOMocqKzhStIVOmwwEAHrKO5lSYzoKp01C2J+bt+7IA==",
   "success": true,
   "projectFilePath": "C:\\Users\\FABIAN CAMPOVERDE\\OneDrive\\Documentos\\COMPUTACION 2023\\WebApi\\WebApi\\WebApi\\WebApi.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\FABIAN CAMPOVERDE\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\FABIAN CAMPOVERDE\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\FABIAN CAMPOVERDE\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\FABIAN CAMPOVERDE\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\6.0.22\\microsoft.aspnetcore.jsonpatch.6.0.22.nupkg.sha512",
     "C:\\Users\\FABIAN CAMPOVERDE\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\6.0.22\\microsoft.aspnetcore.mvc.newtonsoftjson.6.0.22.nupkg.sha512",

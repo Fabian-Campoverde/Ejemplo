@@ -28,7 +28,6 @@ namespace WebApi.Model
         [Required]
         public int Stock {  get; set; }
 
-        public string? Tipo { get; set; }
 
         public string imgUrl { get; set; }
 

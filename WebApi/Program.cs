@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WebApi;
 using WebApi.Datos;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<AplicationDbContext>(option=>
 }
 
 );
+
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 var app = builder.Build();
 

@@ -2,8 +2,9 @@
 
 namespace WebApi.Model.DTO
 {
-    public class ProductDTO 
+    public class ProductUpdateDTO 
     {
+        [Required]
         public int Id { get; set; }
 
 
@@ -25,6 +26,7 @@ namespace WebApi.Model.DTO
         [Required]
         public int Stock { get; set; }
 
+        [Required]
         public string imgUrl { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace WebApi.Datos
                     Precio=15.50,
                     Stock=20,
                     Description="",
-                    Tipo="",
+                    
                     FechaCreacion=DateTime.Now,
                     imgUrl=""
                 },
@@ -36,7 +36,7 @@ namespace WebApi.Datos
                     Precio = 5.50,
                     Stock = 120,
                     Description = "",
-                    Tipo = "",
+                    
                     FechaCreacion = DateTime.Now,
                     imgUrl = ""
                 }
